@@ -1,14 +1,15 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-// Put on a Button that has a round knob child. No audio or saving yet: it only remembers the state.
+// Put on a Button that has a round knob child.
+// No audio or saving yet: it only remembers the state.
 [RequireComponent(typeof(Button))]
 public class ToggleSwitch : MonoBehaviour
 {
     [SerializeField] RectTransform knob;
     [SerializeField] Image background;
     [SerializeField] bool isOn = true;
-    [SerializeField] float travel = 76f;     // how far the knob moves left to right
+    [SerializeField] float travel = 84f;     // how far the knob moves left to right
     [SerializeField] Color onColor = new Color32(0x3D, 0xDC, 0x84, 255);
     [SerializeField] Color offColor = new Color32(0x6B, 0x5B, 0xB0, 255);
 
