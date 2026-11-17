@@ -1,87 +1,51 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-// Put on a shop card that has a buy Button and a price label.
-public class ShopItemm : MonoBehaviour
+// Put this on a Slider. It shows the value as a percentage and
+// makes the handle grow while you drag, then bounce back when you let go.
+// There is no audio yet: it only reads and shows the value.
+[RequireComponent(typeof(Slider))]
+public class VolumeSlider : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    enum Reward { Coins, Gems, Skin }
+    [SerializeField] TMP_Text valueLabel;   // the "80%" text next to the slider
+    [SerializeField] RectTransform handle;  // the round knob you drag
 
-    [SerializeField] Reward reward = Reward.Coins;
-    [SerializeField] int amount = 500;      // how many coins or gems you get
-    [SerializeField] int gemCost = 0;       // 0 = free
-    [SerializeField] bool oneTime = true;   // can only be bought once
-    [SerializeField] Button buyButton;
-    [SerializeField] TMP_Text priceLabel;
+    Slider slider;
+    Coroutine running;
 
-    bool owned;
-    string originalText;
-    Coroutine flash;
+    // Other scripts can read this later when you add audio (0 = silent, 1 = full).
+    public float Value => slider.value;
 
     void Awake()
     {
-        // If you forgot to drag them in, look for them inside this card.
-        if (buyButton == null) buyButton = GetComponentInChildren<Button>(true);
-        if (priceLabel == null && buyButton != null)
-            priceLabel = buyButton.GetComponentInChildren<TMP_Text>(true);
-
-        // Tell the developer (you) what is wrong instead of failing silently.
-        if (buyButton == null) { Debug.LogError(name + ": no Button found inside this card.", this); return; }
-        if (priceLabel == null) { Debug.LogError(name + ": no price label found inside the buy button.", this); return; }
-
-        originalText = priceLabel.text;
-        buyButton.onClick.AddListener(Buy);
+        slider = GetComponent<Slider>();
+        slider.onValueChanged.AddListener(Refresh);   // update the text whenever it moves
+        Refresh(slider.value);
     }
 
-    void Buy()
+    void Refresh(float value)
     {
-        if (owned) return;
-
-        // Not enough gems: say so and take nothing.
-        if (gemCost > 0 && !Wallet.TrySpendGems(gemCost))
-        {
-            if (Toast.Instance != null) Toast.Instance.Show("Not enough gems. Try the gem pack.");
-            return;
-        }
-
-        if (reward == Reward.Coins) Wallet.AddCoins(amount);
-        if (reward == Reward.Gems) Wallet.AddGems(amount);
-
-        if (oneTime)
-        {
-            owned = true;
-            SetLabel("Owned");
-            buyButton.interactable = false;
-            if (buyButton.image != null) buyButton.image.color = new Color(1f, 1f, 1f, 0.5f);  // dimmed = finished
-        }
-        else
-        {
-            // Repeatable item: flash what you got, then go back to the price.
-            if (flash != null) StopCoroutine(flash);
-            flash = StartCoroutine(FlashLabel("+" + amount));
-        }
-
-        if (Toast.Instance != null) Toast.Instance.Show("Purchased!");
-        StartCoroutine(Punch());
+        int percent = Mathf.RoundToInt(value * 100f);
+        valueLabel.text = percent == 0 ? "Off" : percent + "%";   // a word, not just a position
     }
 
-    void SetLabel(string text) { priceLabel.text = text; }
+    // Finger down: the handle grows so you can see it is held.
+    public void OnPointerDown(PointerEventData e) { ScaleHandle(1.25f, 0.15f, Ease.OutCubic); }
 
-    IEnumerator FlashLabel(string text)
-    {
-        SetLabel(text);
-        yield return new WaitForSecondsRealtime(0.8f);
-        SetLabel(originalText);
-    }
+    // Finger up: the handle springs back with a small bounce.
+    public void OnPointerUp(PointerEventData e) { ScaleHandle(1f, 0.30f, Ease.OutBack); }
 
-    IEnumerator Punch()
+    void ScaleHandle(float target, float duration, Ease ease)
     {
-        // The label bounces so your eye goes to what changed.
-        yield return Tween.Run(0.38f, Ease.OutBack, p =>
+        if (running != null) StopCoroutine(running);
+        float start = handle.localScale.x;
+        running = StartCoroutine(Tween.Run(duration, ease, p =>
         {
-            float s = Mathf.LerpUnclamped(1.3f, 1f, p);
-            priceLabel.transform.localScale = new Vector3(s, s, 1f);
-        });
+            float s = Mathf.LerpUnclamped(start, target, p);
+            handle.localScale = new Vector3(s, s, 1f);
+        }));
     }
 }
