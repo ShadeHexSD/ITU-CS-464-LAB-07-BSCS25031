@@ -6,6 +6,8 @@
 **Reference resolution:** 1080 × 1920  
 **Project:** `ITU-CS-464-LAB-07-BSCS25031`
 
+**Release:** [Download Latest Release](https://github.com/ShadeHexSD/ITU-CS-464-LAB-07-BSCS25031/releases/tag/untagged-7b569cafeb297a566e5c)
+
 > Crater Clash is a mobile arcade-game menu prototype. It contains ten connected menu/UI screens and a small gameplay placeholder used to demonstrate pausing and match results. The gameplay placeholder is not counted as one of the ten screens.
 
 ---
