@@ -37,67 +37,7 @@
 
 ---
 
-# 1. Project overview
 
-Crater Clash is a colourful arcade-style mobile game interface. The visual direction uses a deep-indigo base, raised violet panels, thick dark outlines and bright accent colours. The menu system is designed around a clear primary action, repeatable card/button patterns and predictable back navigation.
-
-### Screens included
-
-| # | Screen | Purpose |
-|---:|---|---|
-| 01 | Title | Introduces the game and starts the menu flow |
-| 02 | Main Menu | Central hub for Play, Brawlers, Shop and Settings |
-| 03 | Mode Select | Chooses a game mode |
-| 04 | Level Select | Chooses a map and displays progress/locked states |
-| 05 | Loadout | Selects a brawler and compares stats |
-| 06 | Shop | Purchases demo items with coins and gems |
-| 07 | Settings | Toggles preferences and opens Credits |
-| 08 | Pause | Resumes, restarts or quits a match |
-| 09 | Results | Shows victory, stars and rewards |
-| 10 | Credits | Credits the developer and visual reference |
-
-A separate **Gameplay placeholder** (`Screen_Match`) contains a countdown timer, Pause button and End Match button. It exists only to give Pause and Results a real navigation context; it is not one of the ten menu screens.
-
----
-
-# 2. Screen flow and navigation
-
-```text
-                         ┌──────────────────┐
-                         │    01 Title      │
-                         └────────┬─────────┘
-                                  │ Tap anywhere
-                                  ▼
-                         ┌──────────────────┐
-             ┌──────────►│ 02 Main Menu     │◄──────────────┐
-             │           └───┬────┬─────┬────┘               │
-             │               │    │     │                    │
-             │             Play Brawlers Shop              Quit
-             │               │    │     │                    │
-             │               ▼    ▼     ▼                    │
-             │          ┌──────┐ ┌───────┐ ┌───────┐          │
-             │          │03    │ │05     │ │06     │          │
-             │          │Modes │ │Loadout│ │Shop   │          │
-             │          └──┬───┘ └───┬───┘ └───────┘          │
-             │             │         │                        │
-             │             ▼         │                        │
-             │          ┌──────┐      │                        │
-             │          │04    │──────┘                        │
-             │          │Levels│                               │
-             │          └──┬───┘                               │
-             │             │ Start match                       │
-             │             ▼                                   │
-             │       Gameplay placeholder                      │
-             │          ┌───┴────┐                             │
-             │        Pause    Results                          │
-             │        ┌─┴─┐    ┌─┴────────┐                    │
-             └────────┤Quit   Home     Next map ──► Levels      │
-                      └───────┴─────────────────────────────────┘
-
-Main Menu ── Settings ── Credits
-                  ▲          │
-                  └── Back ──┘
-```
 
 ### Navigation table
 
